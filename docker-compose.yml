@@ -1,0 +1,29 @@
+version: '3'
+services:
+  tx-fluentd:
+    build:
+      context: .
+    restart: always
+    volumes:
+      - $FLUENTD_CONFIG_DIR:/etc
+    environment:
+      FLUENTD_APP: $FLUENTD_APP
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_DATABASE: $MONGO_DATABASE
+      MONGO_COLLECTION: $MONGO_COLLECTION
+      MONGO_NON_ROOT_USERNAME: $MONGO_NON_ROOT_USERNAME
+      MONGO_NON_ROOT_PASSWORD: $MONGO_NON_ROOT_PASSWORD
+    depends_on:
+      - tx-mongodb
+
+  tx-mongodb:
+    image: txscience/tx-persistence:latest
+    restart: always
+    volumes:
+      - ${MONGODB_DATA_VOLUME}:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME}
+      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD}
